@@ -1,4 +1,5 @@
-pragma solidity ^0.5.0;
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
 
 // version 1.0
 contract Randao {
@@ -46,7 +47,7 @@ contract Randao {
 
     modifier beFalse(bool _t) {if (_t) revert(); _;}
 
-    constructor() public {
+    constructor() {
         founder = msg.sender;
     }
 
@@ -75,7 +76,7 @@ contract Randao {
     ) payable
         timeLineCheck(_bnum, _commitBalkline, _commitDeadline)
         moreThanZero(_deposit) external returns (uint256 _campaignID) {
-        _campaignID = campaigns.length++;
+        _campaignID = campaigns.length+1;
         Campaign storage c = campaigns[_campaignID];
         numCampaigns++;
         c.bnum = _bnum;
@@ -202,6 +203,8 @@ contract Randao {
             c.settled = true;
             return c.random;
         }
+
+        return 0;
     }
 
     // The commiter get his bounty and deposit, there are three situations
@@ -248,7 +251,7 @@ contract Randao {
     ) internal {
         p.reward = _share;
         p.rewarded = true;
-        msg.sender.transfer(_share + c.deposit);
+        payable(msg.sender).transfer(_share + c.deposit);
     }
 
     function fines(Campaign storage c) internal view returns (uint256) {
@@ -278,6 +281,6 @@ contract Randao {
         beConsumer(c.consumers[msg.sender].caddr) {
         uint256 bountypot = c.consumers[msg.sender].bountypot;
         c.consumers[msg.sender].bountypot = 0;
-        msg.sender.transfer(bountypot);
+        payable(msg.sender).transfer(bountypot);
     }
 }
